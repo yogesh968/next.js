@@ -83,6 +83,7 @@ import {
   readBodyWithSizeLimit,
 } from '../../server/lib/postponed-request-body' with { 'turbopack-transition': 'next-server-utility' }
 import { parseUrl } from '../../lib/url' with { 'turbopack-transition': 'next-server-utility' }
+import { mergeVary } from '../../server/lib/merge-vary' with { 'turbopack-transition': 'next-server-utility' }
 
 import * as entryBase from '../../server/app-render/entry-base' with { 'turbopack-transition': 'next-server-utility' }
 import { RedirectStatusCode } from '../../client/components/redirect-status-code' with { 'turbopack-transition': 'next-server-utility' }
@@ -727,7 +728,9 @@ export function createAppPageEntrypoint({
         resolvedPathname,
         interceptionRoutePatterns
       )
-      res.setHeader('Vary', varyHeader)
+      // `headers` in `next.config.js` and middleware have already run at this
+      // point, so merge rather than replace whatever they set.
+      res.setHeader('Vary', mergeVary(res.getHeader('Vary'), varyHeader))
       let parentSpan: Span | undefined
       const invokeRouteModule = async (
         span: Span | undefined,

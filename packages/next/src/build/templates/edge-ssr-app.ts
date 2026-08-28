@@ -33,6 +33,7 @@ import { checkIsOnDemandRevalidate } from '../../server/api-utils'
 import { CloseController } from '../../server/web/web-on-close'
 import { parseMaxPostponedStateSize } from '../../shared/lib/size-limit'
 import { toNodeOutgoingHttpHeaders } from '../../server/web/utils'
+import { mergeVary } from '../../server/lib/merge-vary'
 import type { RequestMeta } from '../../server/request-meta'
 
 declare const incrementalCacheHandler: any
@@ -266,7 +267,12 @@ async function requestHandler(
       ...metadata.headers,
     })) {
       if (value !== undefined) {
-        if (Array.isArray(value)) {
+        if (key.toLowerCase() === 'vary') {
+          // An application `Vary` (from `headers` in `next.config.js` or from
+          // middleware) has to be merged with the one set above rather than
+          // replace it, otherwise the RSC fields are lost.
+          headers.set('Vary', mergeVary(headers.get('Vary'), value))
+        } else if (Array.isArray(value)) {
           // Handle multiple header values
           for (const v of value) {
             headers.append(key, String(v))
