@@ -10,6 +10,10 @@ const withCustomPagesDir = path.join(__dirname, 'with-custom-pages-dir')
 const withNestedPagesDir = path.join(__dirname, 'with-nested-pages-dir')
 const withoutPagesDir = path.join(__dirname, 'without-pages-dir')
 const withAppDir = path.join(__dirname, 'with-app-dir')
+const withCustomPageExtensionsDir = path.join(
+  __dirname,
+  'with-custom-page-extensions'
+)
 
 const linters = {
   withoutPages: new Linter({
@@ -26,6 +30,10 @@ const linters = {
   }),
   withCustomPages: new Linter({
     cwd: withCustomPagesDir,
+    configType: 'eslintrc',
+  }),
+  withCustomPageExtensions: new Linter({
+    cwd: withCustomPageExtensionsDir,
     configType: 'eslintrc',
   }),
 }
@@ -61,6 +69,25 @@ const linterConfigWithMultipleDirectories = {
         path.join(withCustomPagesDir, 'custom-pages'),
         path.join(withCustomPagesDir, 'custom-pages/list'),
       ],
+    ],
+  },
+}
+const linterConfigWithDefaultPageExtensions = {
+  ...linterConfig,
+  rules: {
+    'no-html-link-for-pages': [
+      2,
+      path.join(withCustomPageExtensionsDir, 'pages'),
+    ],
+  },
+}
+const linterConfigWithCustomPageExtensions = {
+  ...linterConfig,
+  rules: {
+    'no-html-link-for-pages': [
+      2,
+      path.join(withCustomPageExtensionsDir, 'pages'),
+      { pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'mdx'] },
     ],
   },
 }
@@ -255,6 +282,21 @@ export class Blah extends Head {
   }
 }
 `
+const invalidCustomPageExtensionCode = `
+import Link from 'next/link';
+
+export class Blah extends Head {
+  render() {
+    return (
+      <div>
+        <a href='/about'>About</a>
+        <h1>Hello title</h1>
+      </div>
+    );
+  }
+}
+`
+
 describe('no-html-link-for-pages', function () {
   it('does not print warning when there are "pages" or "app" directories with rootDir in context settings', function () {
     const consoleSpy = jest.spyOn(console, 'warn').mockImplementation()
@@ -493,6 +535,26 @@ describe('no-html-link-for-pages', function () {
     assert.equal(
       report.message,
       'Do not use an `<a>` element to navigate to `/photo/1/`. Use `<Link />` from `next/link` instead. See: https://nextjs.org/docs/messages/no-html-link-for-pages'
+    )
+  })
+  it('ignores a page whose extension is not in the default pageExtensions', function () {
+    const report = linters.withCustomPageExtensions.verify(
+      invalidCustomPageExtensionCode,
+      linterConfigWithDefaultPageExtensions,
+      { filename: 'foo.js' }
+    )
+    assert.deepEqual(report, [])
+  })
+  it('invalid link element with a custom pageExtensions', function () {
+    const [report] = linters.withCustomPageExtensions.verify(
+      invalidCustomPageExtensionCode,
+      linterConfigWithCustomPageExtensions,
+      { filename: 'foo.js' }
+    )
+    assert.notEqual(report, undefined, 'No lint errors found.')
+    assert.equal(
+      report.message,
+      'Do not use an `<a>` element to navigate to `/about/`. Use `<Link />` from `next/link` instead. See: https://nextjs.org/docs/messages/no-html-link-for-pages'
     )
   })
 })

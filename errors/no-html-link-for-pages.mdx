@@ -60,6 +60,28 @@ In some cases, you may also need to configure this rule directly by providing a 
 }
 ```
 
+#### `pageExtensions`
+
+The rule only treats `.js`, `.jsx`, `.ts` and `.tsx` files as pages. It cannot
+read `next.config.js`, so if you have configured a custom
+[`pageExtensions`](/docs/pages/api-reference/config/next-config-js/pageExtensions)
+you need to repeat it here, otherwise pages such as `about.mdx` are not
+recognized and links to them are not reported.
+
+This option is passed after the `pagesDir` option.
+
+```json filename="eslint.config.json"
+{
+  "rules": {
+    "@next/next/no-html-link-for-pages": [
+      "error",
+      "packages/my-app/pages/",
+      { "pageExtensions": ["js", "jsx", "ts", "tsx", "mdx"] }
+    ]
+  }
+}
+```
+
 ## Useful Links
 
 - [next/link API Reference](/docs/pages/api-reference/components/link)

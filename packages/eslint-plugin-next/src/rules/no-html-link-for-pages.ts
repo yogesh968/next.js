@@ -4,6 +4,7 @@ import * as fs from 'fs'
 import { getRootDirs } from '../utils/get-root-dirs'
 
 import {
+  DEFAULT_PAGE_EXTENSIONS,
   getUrlFromPagesDirectories,
   normalizeURL,
   execOnce,
@@ -62,6 +63,19 @@ export default defineRule({
           },
         ],
       },
+      {
+        type: 'object',
+        properties: {
+          pageExtensions: {
+            type: 'array',
+            uniqueItems: true,
+            items: {
+              type: 'string',
+            },
+          },
+        },
+        additionalProperties: false,
+      },
     ],
   },
 
@@ -69,8 +83,17 @@ export default defineRule({
    * Creates an ESLint rule listener.
    */
   create(context) {
-    const ruleOptions: (string | string[])[] = context.options
-    const [customPagesDirectory] = ruleOptions
+    const [customPagesDirectory, options] = context.options as [
+      (string | string[])?,
+      { pageExtensions?: string[] }?,
+    ]
+
+    // The rule cannot read `next.config.js` itself, so a project using a custom
+    // `pageExtensions` has to repeat it here for files such as `page.mdx` to be
+    // recognised as pages.
+    const pageExtensions = options?.pageExtensions?.length
+      ? options.pageExtensions
+      : DEFAULT_PAGE_EXTENSIONS
 
     const rootDirs = getRootDirs(context)
 
@@ -107,8 +130,16 @@ export default defineRule({
       return {}
     }
 
-    const pageUrls = cachedGetUrlFromPagesDirectories('/', foundPagesDirs)
-    const appDirUrls = cachedGetUrlFromAppDirectory('/', foundAppDirs)
+    const pageUrls = cachedGetUrlFromPagesDirectories(
+      '/',
+      foundPagesDirs,
+      pageExtensions
+    )
+    const appDirUrls = cachedGetUrlFromAppDirectory(
+      '/',
+      foundAppDirs,
+      pageExtensions
+    )
     const allUrlRegex = [...pageUrls, ...appDirUrls]
 
     return {
