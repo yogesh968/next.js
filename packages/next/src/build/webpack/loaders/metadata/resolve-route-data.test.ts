@@ -291,5 +291,44 @@ describe('resolveRouteData', () => {
         "
       `)
     })
+    it('should escape XML special characters', () => {
+      expect(
+        resolveSitemap([
+          {
+            url: 'https://example.com/search?q=shoes&sort=price',
+            alternates: {
+              languages: {
+                es: 'https://example.com/es?a=1&b=2',
+              },
+            },
+            images: ['https://example.com/image.jpg?w=1&h=2'],
+            videos: [
+              {
+                title: 'Tom & Jerry <best of>',
+                thumbnail_loc: 'https://example.com/thumb.jpg?a=1&b=2',
+                description: 'She said "hi" & left',
+              },
+            ],
+          },
+        ])
+      ).toMatchInlineSnapshot(`
+        "<?xml version="1.0" encoding="UTF-8"?>
+        <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+        <url>
+        <loc>https://example.com/search?q=shoes&amp;sort=price</loc>
+        <xhtml:link rel="alternate" hreflang="es" href="https://example.com/es?a=1&amp;b=2" />
+        <image:image>
+        <image:loc>https://example.com/image.jpg?w=1&amp;h=2</image:loc>
+        </image:image>
+        <video:video>
+        <video:title>Tom &amp; Jerry &lt;best of&gt;</video:title>
+        <video:thumbnail_loc>https://example.com/thumb.jpg?a=1&amp;b=2</video:thumbnail_loc>
+        <video:description>She said &quot;hi&quot; &amp; left</video:description>
+        </video:video>
+        </url>
+        </urlset>
+        "
+      `)
+    })
   })
 })
