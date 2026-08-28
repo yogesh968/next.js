@@ -291,5 +291,34 @@ describe('resolveRouteData', () => {
         "
       `)
     })
+    it('should resolve sitemap.xml with media alternates', () => {
+      expect(
+        resolveSitemap([
+          {
+            url: 'https://example.com',
+            lastModified: '2021-01-01',
+            alternates: {
+              languages: {
+                es: 'https://example.com/es',
+              },
+              media: {
+                'only screen and (max-width: 640px)': 'https://m.example.com',
+              },
+            },
+          },
+        ])
+      ).toMatchInlineSnapshot(`
+        "<?xml version="1.0" encoding="UTF-8"?>
+        <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+        <url>
+        <loc>https://example.com</loc>
+        <xhtml:link rel="alternate" hreflang="es" href="https://example.com/es" />
+        <xhtml:link rel="alternate" media="only screen and (max-width: 640px)" href="https://m.example.com" />
+        <lastmod>2021-01-01</lastmod>
+        </url>
+        </urlset>
+        "
+      `)
+    })
   })
 })

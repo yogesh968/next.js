@@ -88,6 +88,12 @@ export function resolveSitemap(data: MetadataRoute.Sitemap): string {
         }" />\n`
       }
     }
+    const media = item.alternates?.media
+    if (media && Object.keys(media).length) {
+      for (const query in media) {
+        content += `<xhtml:link rel="alternate" media="${query}" href="${media[query]}" />\n`
+      }
+    }
     if (item.images?.length) {
       for (const image of item.images) {
         content += `<image:image>\n<image:loc>${image}</image:loc>\n</image:image>\n`

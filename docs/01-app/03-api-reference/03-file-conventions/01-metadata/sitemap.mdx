@@ -329,6 +329,61 @@ Output:
 </urlset>
 ```
 
+### Generate a Sitemap with media alternates
+
+Use `alternates.media` to point search engines at a separate URL that serves
+the same page to a specific device, for example a mobile-only site. The key is
+the media query and the value is the alternate URL.
+
+```ts filename="app/sitemap.ts" switcher
+import type { MetadataRoute } from 'next'
+
+export default function sitemap(): MetadataRoute.Sitemap {
+  return [
+    {
+      url: 'https://acme.com',
+      lastModified: new Date(),
+      alternates: {
+        media: {
+          'only screen and (max-width: 640px)': 'https://m.acme.com',
+        },
+      },
+    },
+  ]
+}
+```
+
+```js filename="app/sitemap.js" switcher
+export default function sitemap() {
+  return [
+    {
+      url: 'https://acme.com',
+      lastModified: new Date(),
+      alternates: {
+        media: {
+          'only screen and (max-width: 640px)': 'https://m.acme.com',
+        },
+      },
+    },
+  ]
+}
+```
+
+Output:
+
+```xml filename="acme.com/sitemap.xml"
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://acme.com</loc>
+    <xhtml:link
+      rel="alternate"
+      media="only screen and (max-width: 640px)"
+      href="https://m.acme.com"/>
+    <lastmod>2023-04-06T15:02:24.021Z</lastmod>
+  </url>
+</urlset>
+```
+
 ### Generating multiple sitemaps
 
 While a single sitemap will work for most applications. For large web applications, you may need to split a sitemap into multiple files.
@@ -412,6 +467,7 @@ type Sitemap = Array<{
   priority?: number
   alternates?: {
     languages?: Languages<string>
+    media?: Record<string, string>
   }
   images?: string[]
   videos?: Videos[]
