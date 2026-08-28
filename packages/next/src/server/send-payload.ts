@@ -7,6 +7,10 @@ import { generateETag } from './lib/etag'
 import fresh from 'next/dist/compiled/fresh'
 import { getCacheControlHeader } from './lib/cache-control'
 import { HTML_CONTENT_TYPE_HEADER } from '../lib/constants'
+import {
+  RSC_CONTENT_TYPE_HEADER,
+  RSC_CONTENT_TYPE_HEADER_WITH_CHARSET,
+} from '../client/components/app-router-headers'
 
 export function sendEtagResponse(
   req: IncomingMessage,
@@ -71,7 +75,12 @@ export async function sendRenderResult({
   }
 
   if (!res.getHeader('Content-Type') && result.contentType) {
-    res.setHeader('Content-Type', result.contentType)
+    res.setHeader(
+      'Content-Type',
+      result.contentType === RSC_CONTENT_TYPE_HEADER
+        ? RSC_CONTENT_TYPE_HEADER_WITH_CHARSET
+        : result.contentType
+    )
   }
 
   if (payload) {

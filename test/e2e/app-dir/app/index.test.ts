@@ -359,7 +359,9 @@ describe('app dir - basic', () => {
         },
       }
     )
-    expect(res.headers.get('Content-Type')).toBe('text/x-component')
+    expect(res.headers.get('Content-Type')).toBe(
+      'text/x-component; charset=utf-8'
+    )
   })
 
   it('should use text/x-component for flight with edge runtime', async () => {
@@ -368,7 +370,9 @@ describe('app dir - basic', () => {
         [RSC_HEADER]: '1',
       },
     })
-    expect(res.headers.get('Content-Type')).toBe('text/x-component')
+    expect(res.headers.get('Content-Type')).toBe(
+      'text/x-component; charset=utf-8'
+    )
   })
 
   it('should return the `vary` header from edge runtime', async () => {

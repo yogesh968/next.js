@@ -33,6 +33,10 @@ import { checkIsOnDemandRevalidate } from '../../server/api-utils'
 import { CloseController } from '../../server/web/web-on-close'
 import { parseMaxPostponedStateSize } from '../../shared/lib/size-limit'
 import { toNodeOutgoingHttpHeaders } from '../../server/web/utils'
+import {
+  RSC_CONTENT_TYPE_HEADER,
+  RSC_CONTENT_TYPE_HEADER_WITH_CHARSET,
+} from '../../client/components/app-router-headers'
 import type { RequestMeta } from '../../server/request-meta'
 
 declare const incrementalCacheHandler: any
@@ -252,7 +256,10 @@ async function requestHandler(
     ;(req as any).fetchMetrics = metadata.fetchMetrics
 
     // Set content type
-    const contentType = result.contentType || 'text/html; charset=utf-8'
+    const contentType =
+      result.contentType === RSC_CONTENT_TYPE_HEADER
+        ? RSC_CONTENT_TYPE_HEADER_WITH_CHARSET
+        : result.contentType || 'text/html; charset=utf-8'
     headers.set('Content-Type', contentType)
     headers.set('x-edge-runtime', '1')
 

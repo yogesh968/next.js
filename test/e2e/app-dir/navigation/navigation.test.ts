@@ -64,7 +64,7 @@ describe('app dir - navigation', () => {
           pathname: '/',
           ok: true,
           headers: expect.objectContaining({
-            'content-type': 'text/x-component',
+            'content-type': 'text/x-component; charset=utf-8',
           }),
         })
       )

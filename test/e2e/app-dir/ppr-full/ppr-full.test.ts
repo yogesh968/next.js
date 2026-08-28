@@ -592,7 +592,9 @@ describe.skip('ppr-full', () => {
             })
 
             expect(res.status).toEqual(200)
-            expect(res.headers.get('content-type')).toEqual('text/x-component')
+            expect(res.headers.get('content-type')).toEqual(
+              'text/x-component; charset=utf-8'
+            )
 
             if (isNextDeploy) {
               expectDirectives(res.headers.get('cache-control') || '', [
@@ -628,7 +630,9 @@ describe.skip('ppr-full', () => {
             headers,
           })
           expect(res.status).toEqual(200)
-          expect(res.headers.get('content-type')).toEqual('text/x-component')
+          expect(res.headers.get('content-type')).toEqual(
+            'text/x-component; charset=utf-8'
+          )
           const text = await res.text()
           expect(text).not.toContain(unexpected)
         })
@@ -648,7 +652,9 @@ describe.skip('ppr-full', () => {
             headers,
           })
           expect(res.status).toEqual(200)
-          expect(res.headers.get('content-type')).toEqual('text/x-component')
+          expect(res.headers.get('content-type')).toEqual(
+            'text/x-component; charset=utf-8'
+          )
           expectDirectives(res.headers.get('cache-control') || '', [
             'private',
             'no-store',
@@ -680,7 +686,9 @@ describe.skip('ppr-full', () => {
               headers,
             })
             expect(res.status).toEqual(200)
-            expect(res.headers.get('content-type')).toEqual('text/x-component')
+            expect(res.headers.get('content-type')).toEqual(
+              'text/x-component; charset=utf-8'
+            )
             const text = await res.text()
             expect(text).toContain(expected)
           })
@@ -700,7 +708,9 @@ describe.skip('ppr-full', () => {
               headers,
             })
             expect(res.status).toEqual(200)
-            expect(res.headers.get('content-type')).toEqual('text/x-component')
+            expect(res.headers.get('content-type')).toEqual(
+              'text/x-component; charset=utf-8'
+            )
             const text = await res.text()
             expect(text).not.toContain(unexpected)
           })

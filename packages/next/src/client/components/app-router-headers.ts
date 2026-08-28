@@ -15,6 +15,13 @@ export const NEXT_HMR_REFRESH_HEADER = 'next-hmr-refresh' as const
 export const NEXT_URL = 'next-url' as const
 export const RSC_CONTENT_TYPE_HEADER = 'text/x-component' as const
 
+// The value written to the `Content-Type` of a flight response. The bare media
+// type above is what the client sends in `Accept`, what it compares responses
+// against with `startsWith`, and what the routes manifest advertises, so the
+// charset only belongs on the response header itself.
+export const RSC_CONTENT_TYPE_HEADER_WITH_CHARSET =
+  `${RSC_CONTENT_TYPE_HEADER}; charset=utf-8` as const
+
 // Cookie for the Instant Navigation Testing API. Sent automatically with all
 // requests while a navigation lock is held; the server uses its presence to
 // render only the shell. Not exposed in production builds by default.

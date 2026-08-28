@@ -81,7 +81,9 @@ describe('segment cache (deployment skew)', () => {
         })
 
         expect(res.status).toBe(200)
-        expect(res.headers.get('content-type')).toBe('text/x-component')
+        expect(res.headers.get('content-type')).toBe(
+          'text/x-component; charset=utf-8'
+        )
         expect(res.headers.get('x-nextjs-deployment-id')).toBeTruthy()
       }
     })

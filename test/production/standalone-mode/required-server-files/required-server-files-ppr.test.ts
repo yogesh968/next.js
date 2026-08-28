@@ -162,7 +162,9 @@ describe.skip('required server files app router', () => {
       )
 
       expect(res.status).toBe(200)
-      expect(res.headers.get('content-type')).toBe('text/x-component')
+      expect(res.headers.get('content-type')).toBe(
+        'text/x-component; charset=utf-8'
+      )
 
       // We expect that because we're performing a segment prefetch, we
       // shouldn't even get to the cache entry handler.
@@ -496,7 +498,9 @@ describe.skip('required server files app router', () => {
     )
 
     expect(res.status).toBe(200)
-    expect(res.headers.get('content-type')).toEqual('text/x-component')
+    expect(res.headers.get('content-type')).toEqual(
+      'text/x-component; charset=utf-8'
+    )
     expect(res.headers.has('x-nextjs-postponed')).toBeFalse()
   })
 
@@ -530,7 +534,9 @@ describe.skip('required server files app router', () => {
     )
 
     expect(res.status).toBe(200)
-    expect(res.headers.get('content-type')).toEqual('text/x-component')
+    expect(res.headers.get('content-type')).toEqual(
+      'text/x-component; charset=utf-8'
+    )
     expect(res.headers.has('x-nextjs-postponed')).toBeFalse()
 
     // We expect that because we requested this dynamic RSC route without
@@ -579,7 +585,9 @@ describe.skip('required server files app router', () => {
     )
 
     expect(res.status).toBe(200)
-    expect(res.headers.get('content-type')).toEqual('text/x-component')
+    expect(res.headers.get('content-type')).toEqual(
+      'text/x-component; charset=utf-8'
+    )
     expect(res.headers.has('x-nextjs-postponed')).toBeFalse()
 
     // We expect that because we're resuming, it should be a miss, because it
